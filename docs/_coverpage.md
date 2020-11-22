@@ -5,3 +5,6 @@
 - **总结归纳**
 
 > **Leetcode By Johnny**
+
+[GitHub](https://github.com/hezhuoyi/leetcode)
+[Get Started](/开始)
