@@ -68,85 +68,57 @@ var generateParenthesis = function (n) {
 };
 ```
 
-## 695. 岛屿的最大面积
-给定一个包含了一些 0 和 1 的非空二维数组 grid 。
-一个 岛屿 是由一些相邻的 1 (代表土地) 构成的组合，这里的「相邻」要求两个 1 必须在水平或者竖直方向上相邻。你可以假设 grid 的四个边缘都被 0（代表水）包围着。
-找到给定的二维数组中最大的岛屿面积。(如果没有岛屿，则返回面积为 0 。)
+## 剑指 Offer 13. 机器人的运动范围
+地上有一个m行n列的方格，从坐标 [0,0] 到坐标 [m-1,n-1] 。一个机器人从坐标 [0, 0] 的格子开始移动，它每次可以向左、右、上、下移动一格（不能移动到方格外），也不能进入行坐标和列坐标的数位之和大于k的格子。例如，当k为18时，机器人能够进入方格 [35, 37] ，因为3+5+3+7=18。但它不能进入方格 [35, 38]，因为3+5+3+8=19。请问该机器人能够到达多少个格子？
 
 ```js
 /**
- * @param {number[][]} grid
+ * @param {number} m
+ * @param {number} n
+ * @param {number} k
  * @return {number}
  */
-var maxAreaOfIsland = function (grid) {
-    if (!grid.length) return 0;
-    const m = grid.length, n = grid[0].length;
-    let count = max = 0;
-    for (let i = 0; i < m; i++) {
-        for (let j = 0; j < n; j++) {
-            if (grid[i][j] === 1) {
-                count = 0;
-                bfs(i, j);
-                max = Math.max(max, count);
+// BFS
+var movingCount = function (m, n, k) {
+    let total = 0;
+    const obj = { '0 0': true }; // 记录位置 防止重新访问
+    const queue = [[0, 0]];
+    const isValid = (x, y) => (x + '' + y).split('').reduce((a, b) => Number(a) + Number(b)) <= k;
+    while (queue.length) {
+        let len = queue.length;
+        while (len--) {
+            const [x, y] = queue.shift();
+            total++;
+            // 只需要考虑往右和下的方向
+            if (x < m - 1 && !obj[`${x + 1} ${y}`] && isValid(x + 1, y)) {
+                queue.push([x + 1, y]);
+                obj[`${x + 1} ${y}`] = true;
+            }
+            if (y < n - 1 && !obj[`${x} ${y + 1}`] && isValid(x, y + 1)) {
+                queue.push([x, y + 1]);
+                obj[`${x} ${y + 1}`] = true;
             }
         }
     }
-    return max;
-    function bfs(i, j) {
-        const queue = [[i, j]];
-        grid[i][j] = 0; // 重置当前grid 下同
-        count++;
-        while (queue.length) {
-            const len = queue.length;
-            for (let k = 0; k < len; k++) {
-                const [row, col] = queue.shift();
-                if (row + 1 < m && grid[row + 1][col] === 1) {
-                    grid[row + 1][col] = 0;
-                    count++;
-                    queue.push([row + 1, col]);
-                }
-                if (col + 1 < n && grid[row][col + 1] === 1) {
-                    grid[row][col + 1] = 0;
-                    count++;
-                    queue.push([row, col + 1]);
-                }
-                if (row - 1 >= 0 && grid[row - 1][col] === 1) {
-                    grid[row - 1][col] = 0;
-                    count++;
-                    queue.push([row - 1, col]);
-                }
-                if (col - 1 >= 0 && grid[row][col - 1] === 1) {
-                    grid[row][col - 1] = 0;
-                    count++;
-                    queue.push([row, col - 1]);
-                }
-            }
-        }
-    }
+    return total;
 };
 
-var maxAreaOfIsland = function (grid) {
-    if (!grid.length) return 0;
-    const m = grid.length, n = grid[0].length;
-    let count = max = 0;
-    for (let i = 0; i < m; i++) {
-        for (let j = 0; j < n; j++) {
-            if (grid[i][j] === 1) {
-                count = 0;
-                dfs(i, j);
-                max = Math.max(max, count);
-            }
+var movingCount = function (m, n, k) {
+    let total = 0;
+    const obj = {};
+    function dfs(i, j) {
+        // 边界直接返回
+        if (i < 0 || j < 0 || i >= m || j >= n) return;
+        const sum = (i + '' + j).split('').reduce((a, b) => Number(a) + Number(b));
+        const cur = `${i} ${j}`; // 记录位置 防止重新访问
+        if (sum <= k && !obj[cur]) {
+            total++;
+            obj[cur] = true;
+            dfs(i + 1, j);
+            dfs(i, j + 1);
         }
     }
-    return max;
-
-    function dfs(i, j) {
-        grid[i][j] = 0;
-        count++;
-        if (i + 1 < m && grid[i + 1][j] === 1) dfs(i + 1, j);
-        if (j + 1 < n && grid[i][j + 1] === 1) dfs(i, j + 1);
-        if (i - 1 >= 0 && grid[i - 1][j] === 1) dfs(i - 1, j);
-        if (j - 1 >= 0 && grid[i][j - 1] === 1) dfs(i, j - 1);
-    }
+    dfs(0, 0);
+    return total;
 };
 ```
