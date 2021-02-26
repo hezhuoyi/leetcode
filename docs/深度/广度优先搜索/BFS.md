@@ -68,6 +68,62 @@ var generateParenthesis = function (n) {
 };
 ```
 
+## 994. 腐烂的橘子
+在给定的网格中，每个单元格可以有以下三个值之一：
+值 0 代表空单元格；
+值 1 代表新鲜橘子；
+值 2 代表腐烂的橘子。
+每分钟，任何与腐烂的橘子（在 4 个正方向上）相邻的新鲜橘子都会腐烂。
+返回直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回 -1。
+
+```js
+/**
+ * @param {number[][]} grid
+ * @return {number}
+ */
+// BFS
+var orangesRotting = function (grid) {
+    const m = grid.length, n = grid[0].length;
+    let time = count = 0;
+    const queue = [];
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (grid[i][j] === 2) {
+                queue.push([i, j]);
+            } else if (grid[i][j] === 1) {
+                count++;
+            }
+        }
+    }
+    while (queue.length) {
+        let len = queue.length;
+        while (len--) {
+            const [x, y] = queue.shift();
+            let has = false;
+            if (x - 1 >= 0 && grid[x - 1][y] === 1) {
+                grid[x - 1][y] = 2;
+                queue.push([x - 1, y]);
+            }
+            if (y - 1 >= 0 && grid[x][y - 1] === 1) {
+                grid[x][y - 1] = 2;
+                queue.push([x, y - 1]);
+            }
+            if (x + 1 < m && grid[x + 1][y] === 1) {
+                grid[x + 1][y] = 2;
+                queue.push([x + 1, y]);
+            }
+            if (y + 1 < n && grid[x][y + 1] === 1) {
+                grid[x][y + 1] = 2;
+                queue.push([x, y + 1]);
+            }
+        }
+        count -= queue.length;
+        if (queue.length) time++;
+    }
+    return count ? -1 : time;
+};
+```
+
 ## 剑指 Offer 13. 机器人的运动范围
 地上有一个m行n列的方格，从坐标 [0,0] 到坐标 [m-1,n-1] 。一个机器人从坐标 [0, 0] 的格子开始移动，它每次可以向左、右、上、下移动一格（不能移动到方格外），也不能进入行坐标和列坐标的数位之和大于k的格子。例如，当k为18时，机器人能够进入方格 [35, 37] ，因为3+5+3+7=18。但它不能进入方格 [35, 38]，因为3+5+3+8=19。请问该机器人能够到达多少个格子？
 
