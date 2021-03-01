@@ -267,3 +267,44 @@ const islandPerimeter = (grid) => {
     return land * 4 - border * 2;
 };
 ```
+
+## 130. 被围绕的区域
+给定一个二维的矩阵，包含 'X' 和 'O'（字母 O）。
+找到所有被 'X' 围绕的区域，并将这些区域里所有的 'O' 用 'X' 填充。
+
+```js
+/**
+ * @param {character[][]} board
+ * @return {void} Do not return anything, modify board in-place instead.
+ */
+// DFS 反向思维 先找到所有不需要转换的 O => Z 最后除了该部分 其余都转为X
+var solve = function (board) {
+    const m = board.length, n = board[0].length;
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (board[i][j] === 'O' && (i == 0 || i == m - 1 || j == 0 || j === n - 1)) { // 靠边界的O
+                dfs(i, j);
+            }
+        }
+    }
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (board[i][j] === 'Z') {
+                board[i][j] = 'O';
+            } else {
+                board[i][j] = 'X';
+            }
+        }
+    }
+    function dfs(i, j) {
+        if (i < 0 || j < 0 || i >= m || j >= n) return;
+        if (board[i][j] === 'O') {
+            board[i][j] = 'Z';
+            dfs(i + 1, j);
+            dfs(i - 1, j);
+            dfs(i, j - 1);
+            dfs(i, j + 1);
+        }
+    }
+};
+```
