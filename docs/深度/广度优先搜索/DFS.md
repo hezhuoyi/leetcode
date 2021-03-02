@@ -307,4 +307,37 @@ var solve = function (board) {
         }
     }
 };
+
+// BFS 思路同上
+var solve = function (board) {
+    const m = board.length, n = board[0].length;
+    const queue = []
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (board[i][j] === 'O' && (i == 0 || i == m - 1 || j == 0 || j === n - 1)) { // 靠边界的O
+                queue.push([i, j]);
+            }
+        }
+    }
+    while (queue.length) {
+        let len = queue.length;
+        while (len--) {
+            const [x, y] = queue.shift();
+            board[x][y] = 'Z';
+            if (x - 1 >= 0 && board[x - 1][y] === 'O') queue.push([x - 1, y]);
+            if (x + 1 < m && board[x + 1][y] === 'O') queue.push([x + 1, y]);
+            if (y - 1 >= 0 && board[x][y - 1] === 'O') queue.push([x, y - 1]);
+            if (y + 1 < n && board[x][y + 1] === 'O') queue.push([x, y + 1]);
+        }
+    }
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+            if (board[i][j] === 'Z') {
+                board[i][j] = 'O';
+            } else {
+                board[i][j] = 'X';
+            }
+        }
+    }
+};
 ```
